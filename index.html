@@ -22,8 +22,10 @@ demoApp.config(function ($routeProvider){
 	 .otherwise({redirectTo: "/view1"});
 });
 
-demoApp.factory('simpleFactory', function  ($http) {//inject http object to get, put, post
+demoApp.factory('simpleFactory', function  ($http, $q) {//inject http object to get, put, post
+	var deffered = $q.defer();
 	var factory = {};
+	//var d = [];
 	var clubs = [
 		{ name: 'Real Mardid', country: "Spain"},
 		{ name : 'Manchester United', country:"England"}
@@ -32,20 +34,41 @@ demoApp.factory('simpleFactory', function  ($http) {//inject http object to get,
 		console.log("get data from factory.getClubs")
 		return clubs; // could be async call, ajax, websockets
 	};
-	factory.postCustomer = function(customer){
+	factory.async = function(){
 
+		$http({method: 'GET', url: 'http://localhost:8082/?productGroupCode=AP&rowLimit=10'}).
+  			success(function(data, status, headers, config) {
+    		console.log("succes : "+ data);
+    		d = data;
+    		deffered.resolve(data);
+  		}).
+  		error(function(data, status, headers, config) {
+    		console.log("error: "+ data + " " + status + " " + headers );
+    		deffered.reject("error when resorlving promise" + status);
+  		});
+  		return deffered.promise;
 	};
+	//factory.data = function() { return d; };
 	return factory;
 });
 
 
 demoApp.controller('SimpleController', function ($scope, simpleFactory) {
 	$scope.clubs =[];
+	$scope.externaldata = [];
 	init();
 	function init(){//all proces of initialization
 		$scope.clubs = simpleFactory.getClubs();
+		//that call should be lazy
+		simpleFactory.async($scope).then(function(data){
+			console.log(data);
+			console.log("async")
+			$scope.externaldata = data;
+			console.log($scope.externaldata);
+		}, function(reason){
+			console.log(reason);
+		});
 	};
-
 
 	$scope.addClub = function() {
 		//console.log($scope.newClub.name)
