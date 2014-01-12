@@ -1,0 +1,12 @@
+<div class='container'>
+	<h2>View 1</h2>
+	Name:
+	<input type="text" ng-model="filter.name"/>
+	<br />
+	<ul>
+		<li ng-repeat="club in clubs | filter:filter.name | orderBy:'country'">
+			{{ club.name }} from {{ club.country }}
+	</ul>
+	<a href="#/view1">View 1</a>
+
+</div>

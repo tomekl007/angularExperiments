@@ -1,0 +1,39 @@
+<html ng-app="demoApp">
+<body>
+	<div>
+		<!-- placehlder for views -->
+		<div ng-view></div>
+	</div>
+<script src="angular.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script>
+var demoApp = angular.module('demoApp', ['ngRoute']);
+
+demoApp.config(function ($routeProvider){
+	$routeProvider
+	 .when("/view1", {
+	 	controller : 'SimpleController',
+	 	templateUrl : 'Partials/View1.html'
+	 })
+	 .when("/view2", {
+	 	controller : 'SimpleController',
+	 	templateUrl : 'Partials/View2.html'
+	 })
+	 .otherwise({redirectTo: "/view1"});
+});
+
+demoApp.controller('SimpleController', function ($scope) {
+	$scope.clubs = [
+		{ name: 'Real Mardid', country: "Spain"},
+		{ name : 'Manchester United', country:"England"}
+	];
+
+	$scope.addClub = function() {
+		//console.log($scope.newClub.name)
+		$scope.clubs.push({name: $scope.newClub.name, country: $scope.newClub.country})
+	};
+});
+
+</script>
+</body>
+</html>
