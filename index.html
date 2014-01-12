@@ -22,11 +22,30 @@ demoApp.config(function ($routeProvider){
 	 .otherwise({redirectTo: "/view1"});
 });
 
-demoApp.controller('SimpleController', function ($scope) {
-	$scope.clubs = [
+demoApp.factory('simpleFactory', function  ($http) {//inject http object to get, put, post
+	var factory = {};
+	var clubs = [
 		{ name: 'Real Mardid', country: "Spain"},
 		{ name : 'Manchester United', country:"England"}
 	];
+	factory.getClubs = function(){
+		console.log("get data from factory.getClubs")
+		return clubs; // could be async call, ajax, websockets
+	};
+	factory.postCustomer = function(customer){
+
+	};
+	return factory;
+});
+
+
+demoApp.controller('SimpleController', function ($scope, simpleFactory) {
+	$scope.clubs =[];
+	init();
+	function init(){//all proces of initialization
+		$scope.clubs = simpleFactory.getClubs();
+	};
+
 
 	$scope.addClub = function() {
 		//console.log($scope.newClub.name)
